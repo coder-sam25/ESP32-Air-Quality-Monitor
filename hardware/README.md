@@ -1,1 +1,1 @@
-Hardware design files (schematic and PCB)
+Schematic of the hardware design is attached as a screenshot
