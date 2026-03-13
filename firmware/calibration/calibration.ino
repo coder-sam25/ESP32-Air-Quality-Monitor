@@ -1,58 +1,77 @@
 /*
   ESP32 Air Quality Monitor - MQ Sensor Calibration
+  Calculates R0 values for MQ sensors
 
-  This sketch calculates the baseline resistance (R0)
-  for MQ-series gas sensors in clean air.
-
-  Author: <Sampurna Raychaudhuri>
+  Author: Sampurna Raychaudhuri
 */
 
-#define ADC_MAX 4095
-#define VREF    3.3
-#define RL      10.0   // Load resistor in kOhms
-
-// MQ sensor pins
-#define MQ2_PIN   32
-#define MQ3_PIN   33
 #define MQ7_PIN   34
 #define MQ135_PIN 35
+#define MQ2_PIN   32
+#define MQ3_PIN   33
 
-float calculateR0(int pin) {
-  long adcSum = 0;
+#define RL_VALUE 10.0
+#define ADC_MAX 4095.0
 
-  for (int i = 0; i < 100; i++) {
-    adcSum += analogRead(pin);
-    delay(50);
-  }
+#define CALIBRATION_SAMPLES 50
+#define SAMPLE_INTERVAL 500
 
-  float adcAvg = adcSum / 100.0;
-  float voltage = (adcAvg / ADC_MAX) * VREF;
-  float rs = ((VREF - voltage) / voltage) * RL;
+float R0_MQ2;
+float R0_MQ3;
+float R0_MQ7;
+float R0_MQ135;
 
+float calculateResistance(int adcValue)
+{
+  float voltage = adcValue * (3.3 / ADC_MAX);
+  float rs = (3.3 - voltage) / voltage * RL_VALUE;
   return rs;
 }
 
-void setup() {
-  Serial.begin(115200);
-  delay(2000);
+float calibrateSensor(int pin)
+{
+  float rs = 0;
 
-  Serial.println("MQ Sensor Calibration");
-  Serial.println("Ensure sensors are in clean air");
-  Serial.println();
+  for (int i = 0; i < CALIBRATION_SAMPLES; i++)
+  {
+    int adc = analogRead(pin);
+    rs += calculateResistance(adc);
+    delay(SAMPLE_INTERVAL);
+  }
+
+  rs = rs / CALIBRATION_SAMPLES;
+  return rs;
+}
+
+void setup()
+{
+  Serial.begin(115200);
+
+  Serial.println("MQ Sensor Calibration Starting...");
+  Serial.println("Place sensors in CLEAN AIR");
+
+  delay(15000); // sensor warmup
+
+  R0_MQ2 = calibrateSensor(MQ2_PIN);
+  R0_MQ3 = calibrateSensor(MQ3_PIN);
+  R0_MQ7 = calibrateSensor(MQ7_PIN);
+  R0_MQ135 = calibrateSensor(MQ135_PIN);
+
+  Serial.println("\nCalibration Complete\n");
 
   Serial.print("MQ2 R0: ");
-  Serial.println(calculateR0(MQ2_PIN));
+  Serial.println(R0_MQ2);
 
   Serial.print("MQ3 R0: ");
-  Serial.println(calculateR0(MQ3_PIN));
+  Serial.println(R0_MQ3);
 
   Serial.print("MQ7 R0: ");
-  Serial.println(calculateR0(MQ7_PIN));
+  Serial.println(R0_MQ7);
 
   Serial.print("MQ135 R0: ");
-  Serial.println(calculateR0(MQ135_PIN));
+  Serial.println(R0_MQ135);
+
+  
 }
 
-void loop() {
-  // Calibration runs once
-}
+void loop() {}
