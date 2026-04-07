@@ -125,15 +125,6 @@ Displays:
 MQ sensors require calibration before use.
 
 Calibration determines the **baseline resistance (R₀)** in clean air.
-
-## Calibration Steps
-
-1. Upload the **calibration code**
-2. Place sensors in **clean air**
-3. Wait for sensors to warm up
-4. Record the printed **R0 values**
-5. Insert these values into your main program
-
 Calibration significantly improves measurement accuracy.
 
 ---
