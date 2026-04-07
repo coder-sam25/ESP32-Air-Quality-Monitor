@@ -1,9 +1,3 @@
-/*
-  ESP32 Air Quality Monitor - MQ Sensor Calibration
-  Calculates R0 values for MQ sensors
-
-  Author: Sampurna Raychaudhuri
-*/
 
 #define MQ7_PIN   34
 #define MQ135_PIN 35
