@@ -18,12 +18,12 @@
 // --- Initialize Libraries ---
 Adafruit_SSD1306 display(128, 64, &Wire, OLED_RESET);
 DHT dht(DHTPIN, DHTTYPE);
-RTC_DS1307 rtc; // Replace with your RTC class name
+RTC_DS1307 rtc; 
 
 // --- Timing Variables ---
 unsigned long previousMillis = 0;
-const unsigned long interval = 6000; // 2 seconds interval
-int screenState = 0; // 0: RTC/DHT11, 1: MQ7/MQ135, 2: MQ2/Anonymous
+const unsigned long interval = 6000; // 6 seconds interval
+int screenState = 0; // 0: RTC/DHT11, 1: MQ7/MQ135, 2: MQ2/MQ3
 
 // --- Sensor Variables ---
 float temperature, humidity;
@@ -36,7 +36,7 @@ void setup() {
 
   // Initialize I2C for OLED and RTC
   Wire.begin();
-  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3C or 0x3D
+  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3C 
     Serial.println(F("SSD1306 allocation failed"));
     for (;;);
   }
@@ -126,7 +126,7 @@ void displayScreen(int state) {
       // Display MQ2 (analog raw value)
       display.print("MQ2 (Smoke/Gas): ");
       display.println(mq2_val);
-      // Display Anonymous (analog raw value)
+      // Display MQ3 (analog raw value)
       display.print("MQ3 (Val): ");
       display.println(mq3_val);
       break;
